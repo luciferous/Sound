@@ -1,0 +1,24 @@
+<!doctype html>
+<html><head>
+    <script type="text/javascript" src="swfobject.js"></script>
+    <script type="text/javascript" src="beep.js"></script>
+    <script type="text/javascript" src="sound.js"></script>
+    <script type="text/javascript">
+      function init() {
+        Sound.debug = true;
+        Sound.initialize();
+      }
+      function dynamic() {
+        Sound.flash.__playBytes(new Array(11).join(
+            Beep.utils.map(
+                function(t) { return String.fromCharCode((t + 1) * 32767); },
+                new Beep(44100).generate(440)
+            ).join("")
+        ));
+      }
+      function static() {
+        Sound.flash.__play(1, "testsound.mp3");
+      }
+    </script>
+</head><body onload="init()">
+</body></html>
