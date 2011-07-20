@@ -1,0 +1,17 @@
+<!doctype html>
+<html><head>
+    <script type="text/javascript" src="swfobject.js"></script>
+    <script type="text/javascript" src="sound.js"></script>
+    <script type="text/javascript">
+      function init() {
+        Sound.debug = true;
+        Sound.initialize();
+      }
+      function static() {
+        var s = new Sound();
+        s.load("testsound.mp3");
+        s.play();
+      }
+    </script>
+</head><body onload="init()">
+</body></html>
