@@ -9,22 +9,40 @@ if (!swfobject.hasFlashPlayerVersion("10.0.0")) {
 function Sound(url) {
     this.id = Sound.nextId++;
     Sound.items[this.id] = this;
-    Sound.flash.__create(this.id);
+    this.create();
 }
 
 Sound.prototype = {
+    create: function() {
+        var id = this.id;
+        Sound.queue(function() {
+            Sound.flash.__create(id);
+        });
+    },
     play: function(startTime, loops) {
-        Sound.flash.__play(this.id, startTime, loops);
+        var id = this.id;
+        Sound.queue(function() {
+            Sound.flash.__play(id, startTime, loops);
+        });
     },
     load: function(url) {
-        Sound.flash.__load(this.id, url);
+        var id = this.id;
+        Sound.queue(function() {
+            Sound.flash.__load(id, url);
+        });
     },
     stop: function() {
-        Sound.flash.__stop(this.id);
+        var id = this.id;
+        Sound.queue(function() {
+            Sound.flash.__stop(id);
+        });
     },
     destroy: function() {
-        Sound.flash.__destroy(this.id);
-        delete Sound.items[this.id];
+        var id = this.id;
+        Sound.queue(function() {
+            Sound.flash.__destroy(id);
+            delete Sound.items[id];
+        });
     }
 }
 
