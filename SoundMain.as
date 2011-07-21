@@ -20,7 +20,7 @@ public class SoundMain extends Sprite {
     private var ns:String;
     private var debug:Boolean;
 
-    private var sounds:Array;
+    private var sounds:Object;
 
     /**
      * Constructor
@@ -35,7 +35,7 @@ public class SoundMain extends Sprite {
 
         Security.allowDomain("*");
 
-        sounds = [];
+        sounds = {};
 
         /**
          * Javascript can call these

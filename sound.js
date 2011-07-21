@@ -20,6 +20,8 @@ Sound.prototype = {
         });
     },
     play: function(startTime, loops) {
+        startTime = startTime || 0;
+        loops = loops || 0;
         var id = this.id;
         Sound.queue(function() {
             Sound.flash.__play(id, startTime, loops);
