@@ -97,6 +97,7 @@ public class SoundMain extends Sprite {
      */
     private function stop(id:int):void {
         sounds[id].channel.stop();
+        sounds[id].channel = null;
     }
 
     /**
