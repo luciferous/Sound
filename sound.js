@@ -1,7 +1,7 @@
 (function(ns) {
 
 if (!swfobject.hasFlashPlayerVersion("10.0.0")) {
-    if (window.console) {
+    if (typeof console != "undefined") {
         console.error("Flash Player >= 10.0.0 is required");
     }
 }
@@ -17,6 +17,12 @@ Sound.prototype = {
         var id = this.id;
         Sound.queue(function() {
             Sound.flash.__create(id);
+        });
+    },
+    buffer: function(bytes) {
+        var id = this.id;
+        Sound.queue(function() {
+            Sound.flash.__buffer(id, bytes);
         });
     },
     play: function(startTime, loops) {
@@ -61,7 +67,6 @@ var classMethods = {
                     Sound.initialize(options);    
                 }, false);
             } catch(e) {
-                Sound.log(e, null, "error");
                 window.attachEvent("onload", function() {
                     Sound.initialize(options);
                 });
@@ -80,7 +85,8 @@ var classMethods = {
             "1",
             "10.0.0",
             null,
-            { namespace: window.NS_SOUND ? window.NS_SOUND + ".Sound" : "Sound" },
+            { namespace: typeof NS_SOUND != "undefined" ? NS_SOUND + ".Sound"
+                                                        : "Sound" },
             { hasPriority: true, allowScriptAccess: "always" },
             null,
             function(e) {
@@ -140,4 +146,4 @@ Sound.items = {};
 
 ns.Sound = Sound;
 
-})(window[window.NS_SOUND] || window);
+})(typeof NS_SOUND != "undefined" ? this[NS_SOUND] : this);
