@@ -116,7 +116,7 @@ public class SoundMain extends Sprite {
      */
     private function buffer(id:int, bytes:String):void {
         for (var i:Number = 0; i < bytes.length; i++) {
-            var sample:Number = bytes.charCodeAt(i) / 32768 - 1;
+            var sample:Number = (bytes.charCodeAt(i) - 32767) / 32767;
             sounds[id].buffer.writeFloat(sample);
             sounds[id].buffer.writeFloat(sample);
         }
