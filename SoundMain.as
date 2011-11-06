@@ -75,7 +75,7 @@ public class SoundMain extends Sprite {
     private function create(id:int):void {
         sounds[id] = {
             instance: new Sound(),
-            buffer: new ByteArray(),
+            buffer: [],
             channel: null
         };
         sounds[id].instance.addEventListener(SampleDataEvent.SAMPLE_DATA,
@@ -90,23 +90,19 @@ public class SoundMain extends Sprite {
     private function handleSampleData(id:int):Function {
         var cursor:Number = 0;
         return function(event:SampleDataEvent):void {
-            var buffer:ByteArray = sounds[id].buffer;
-            var available:int = buffer.length - cursor;
-            if (available < MIN_SAMPLE_SIZE) {
-                if (available > 0) {
-                    event.data.writeBytes(buffer, cursor, available);
-                }
-                var pad:int = MIN_SAMPLE_SIZE - available;
-                var reps:int = Math.ceil(pad / silence.length);
-                for (var i:int = 0; i < reps; i++) {
-                    event.data.writeBytes(silence, 0, silence.length);
-                }
-                buffer.clear();
-                cursor = 0;
-            } else {
-                var len:int = Math.min(MAX_SAMPLE_SIZE, available);
-                event.data.writeBytes(buffer, cursor, len);
-                cursor += len;
+            var bytesWritten:int = 0;
+            while (bytesWritten < MAX_SAMPLE_SIZE
+                && sounds[id].buffer.length > 0
+            ) {
+                var frame:ByteArray = sounds[id].buffer.shift();
+                event.data.writeBytes(frame, 0, frame.length);
+                bytesWritten += frame.length;
+                frame.clear();
+            }
+            var pad:int = MIN_SAMPLE_SIZE - bytesWritten;
+            var reps:int = Math.ceil(pad / silence.length);
+            for (var i:int = 0; i < reps; i++) {
+                event.data.writeBytes(silence, 0, silence.length);
             }
         };
     }
@@ -115,11 +111,17 @@ public class SoundMain extends Sprite {
      * Buffers some audio
      */
     private function buffer(id:int, bytes:String):void {
+        var frame:ByteArray = new ByteArray();
         for (var i:Number = 0; i < bytes.length; i++) {
             var sample:Number = (bytes.charCodeAt(i) - 32767) / 32767;
-            sounds[id].buffer.writeFloat(sample);
-            sounds[id].buffer.writeFloat(sample);
+            frame.writeFloat(sample);
+            frame.writeFloat(sample);
+            if (frame.length >= MAX_SAMPLE_SIZE) {
+                sounds[id].buffer.push(frame);
+                frame = new ByteArray();
+            }
         }
+        sounds[id].buffer.push(frame);
     }
 
     /**
