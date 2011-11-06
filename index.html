@@ -5,9 +5,41 @@
     <script type="text/javascript">
         Sound.debug = true;
         Sound.initialize();
-        var s = new Sound();
-        s.load("testsound.mp3");
-        s.play();
+        var sound = new Sound();
+        // sound.load("testsound.mp3");
+        sound.play();
+        var factor = (2 * Math.PI) / 44100;
+        var feed = function() {
+            var samples = [];
+            for (var i = 0; i < 2048; i++) {
+                var sample = (1 + Math.sin(i * 496 * factor)) * 4000;
+                samples.push(String.fromCharCode(sample));
+            }
+            samples = samples.join("");
+            //plot(document.getElementById("plot"), samples, 0, 65535);
+            s.buffer(samples);
+            setTimeout(feed, 40);
+        };
+        setTimeout(feed, 1000);
+
+        function plot(canvas, samples, min, max) {
+            if (typeof min == "undefined") min = Math.min.apply(Math, samples);
+            if (typeof max == "undefined") max = Math.max.apply(Math, samples);
+            var ctx = canvas.getContext("2d"),
+                yRange = max - min,
+                zeroOffset = max - (yRange / 2),
+                yScale = canvas.height / yRange,
+                xScale = samples.length / canvas.width;
+            ctx.beginPath();
+            ctx.moveTo(0, parseInt(canvas.height / 2));
+            for (var i = 0; i < canvas.width; i++) {
+                var sample = samples.charCodeAt(parseInt(i * xScale));
+                var y = yScale * (sample - zeroOffset) + (zeroOffset * yScale);
+                ctx.lineTo(i, y);
+            }
+            ctx.stroke();
+        }
     </script>
 </head><body>
+<canvas id="plot" width="700" height="200"></canvas>
 </body></html>
