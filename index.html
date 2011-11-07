@@ -17,7 +17,7 @@
             }
             samples = samples.join("");
             //plot(document.getElementById("plot"), samples, 0, 65535);
-            s.buffer(samples);
+            sound.buffer(samples);
             setTimeout(feed, 40);
         };
         setTimeout(feed, 1000);
