@@ -144,6 +144,9 @@ public class SoundMain extends Sprite {
             return;
         }
         sounds[id].channel = sounds[id].instance.play(startTime, loops);
+        sounds[id].channel.addEventListener(Event.SOUND_COMPLETE, function(e:Event):void {
+            sounds[id].channel = null;
+        });
     }
 
     /**
